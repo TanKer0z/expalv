@@ -76,7 +76,7 @@ minetest.register_globalstep(function()
 
         if huds then
             player:hud_change(huds.text, "text", "" .. level .. "") 
-            player:hud_change(huds.statbar, "number", percentage)  -- Mettez à jour le pourcentage
+            player:hud_change(huds.statbar, "number", percentage)
         end
     end
 end)
@@ -280,7 +280,7 @@ minetest.register_craftitem("expalv:gain_exp_orb", {
 
 minetest.register_craftitem("expalv:lose_exp_orb", {
     description = "Orbe de perte d'expérience",
-    inventory_image = "expalv_lose_exp_orb.png", -- Remplacez "expalv_lose_exp_orb.png" par le chemin de l'image de votre orbe de perte d'expérience
+    inventory_image = "expalv_lose_exp_orb.png",
     on_use = function(itemstack, user, pointed_thing)
         local player_name = user:get_player_name()
         local exp, level, totalExp = loadExpData(player_name)
@@ -313,7 +313,7 @@ minetest.register_craftitem("expalv:lose_exp_orb", {
         end
 
         saveExpData(player_name, exp, level, totalExp)
-        itemstack:take_item() -- Retire un exemplaire de l'orbe de perte d'expérience après utilisation
+        itemstack:take_item()
 
         return itemstack
     end,
@@ -321,15 +321,13 @@ minetest.register_craftitem("expalv:lose_exp_orb", {
 
 minetest.register_craftitem("expalv:random_exp_orb", {
     description = "Orbe d'expérience aléatoire",
-    inventory_image = "expalv_random_exp_orb.png", -- Remplacez "expalv_random_exp_orb.png" par le chemin de l'image de votre orbe aléatoire d'expérience
+    inventory_image = "expalv_random_exp_orb.png",
     on_use = function(itemstack, user, pointed_thing)
-        local random_effect = math.random(1, 2) -- Génère un nombre aléatoire entre 1 et 2
+        local random_effect = math.random(1, 2)
 
         if random_effect == 1 then
-            -- Effet de gain d'expérience
             return minetest.registered_craftitems["expalv:gain_exp_orb"].on_use(itemstack, user, pointed_thing)
         else
-            -- Effet de perte d'expérience
             return minetest.registered_craftitems["expalv:lose_exp_orb"].on_use(itemstack, user, pointed_thing)
         end
     end,
@@ -405,10 +403,6 @@ minetest.register_chatcommand("xp", {
     end,
 })
 
-
-
-
--- Fonction de tri personnalisée
 local function customSort(a, b)
     if a.level == b.level then
         return a.exp > b.exp
@@ -417,7 +411,6 @@ local function customSort(a, b)
     end
 end
 
--- Commande de chat pour afficher les classements des joueurs
 minetest.register_chatcommand("rankings", {
     params = "",
     description = "View player rankings",
@@ -451,7 +444,6 @@ minetest.register_chatcommand("rankings", {
 
         table.sort(playerList, customSort)
 
-        -- Affichage des 5 premiers joueurs
         for i, player in ipairs(playerList) do
             if i <= 5 then
                 local rank = i
@@ -490,7 +482,6 @@ minetest.register_chatcommand("rankings", {
     end,
 })
 
--- Fonction pour afficher la liste complète des joueurs lors du clic sur le bouton "More"
 minetest.register_on_player_receive_fields(function(player, formname, fields)
     if formname == "rankings" and fields.more then
         local playerList = {}
