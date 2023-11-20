@@ -139,38 +139,13 @@ function saveExpData(playerName, exp, level, totalExp)
     file:close()
 end
 
-local xp_level = {
-    [1] = 0,
-    [2] = 150,
-    [3] = 225,
-    [4] = 350,
-    [5] = 500,
-    [6] = 750,
-    [7] = 1150,
-    [8] = 1700,
-    [9] = 2550,
-    [10] = 4000,
-    [11] = 4800,
-    [12] = 8500,
-    [13] = 13000,
-    [14] = 20000,
-    [15] = 45000,
-    [16] = 65000,
-    [17] = 100000,
-    [18] = 150000,
-    [19] = 220000,
-    [20] = 350000,
-    [21] = 500000,
-    [22] = 750000,
-    [23] = 1100000,
-    [24] = 1500000,
-    [25] = 2500000,
-    [26] = 3800000,
-    [27] = 5500000,
-    [28] = 8500000,
-    [29] = 12500000,
-    [30] = 19500000
-}
+local xp_level = {}
+
+for level = 1, 500 do
+    xp_level[level] = (8 * level) ^ 2
+end
+
+
 
 function getNextLevelAndExp(currentLevel)
     local nextLevel = currentLevel + 1
@@ -525,22 +500,29 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
     end
 end)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+minetest.register_chatcommand("expneeded", {
+    params = "",
+    description = "Check the amount of experience needed to level up",
+    func = function(name, param)
+        local player = minetest.get_player_by_name(name)
+        if player then
+            local exp, level = loadExpData(name)
+            if exp and level then
+                local nextLevel, requiredExp = getNextLevelAndExp(level)
+                if nextLevel <= 500 then
+                    local expNeeded = requiredExp - exp
+                    minetest.chat_send_player(name, "Experience needed to level up: " .. expNeeded)
+                else
+                    minetest.chat_send_player(name, "You are already at the maximum level!")
+                end
+            else
+                minetest.chat_send_player(name, "Error: Player data not found.")
+            end
+        else
+            minetest.chat_send_player(name, "Error: Player not found.")
+        end
+    end,
+})
 
 
 
